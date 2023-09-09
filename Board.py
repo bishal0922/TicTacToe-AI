@@ -1,6 +1,9 @@
 class Board:
     def __init__(self):
         self.board = self.generate_board() 
+        self.our_player = 'X'
+        self.opp_player = 'O'
+        
 
     """
     Generate a 3x3 grid
@@ -35,8 +38,59 @@ class Board:
         #if not empty return Failure
         return False
 
+
+    def is_ours(self, row, col):
+        if self.board[row][col] == self.our_player:
+            return 10
+        elif self.board[row][col] == self.opp_player: 
+            return -10
+
+
+
+    """
+    Evaluate the current game state
+    returns: 10 if our player win -10 if its a loss or 0 if draw
+    """
+
+    def evaluate_game_state(self):
+        #game ends if someone wins or its a draw - check if its a terminal state
+
+        # Win = complete row OR column OR diagonal
+        for i in range(3):
+            #check all rows
+            if self.board[i][0] == self.board[i][1] == self.board[i][2] != " ":
+                return self.is_ours(i, 0)
+
+            #check all columns
+            if self.board[0][i] == self.board[1][i] == self.board[2][i] != " ":
+                return self.is_ours(0, i)
+
+        #check 2 diagonals (\ and /)
+        if self.board[0][0] == self.board[1][1] == self.board[2][2] != " ":
+            return self.is_ours(0,0)
+
+
+        if self.board[0][2] == self.board[1][1] == self.board[2][0] != " ":
+            return self.is_ours(0,2)
+
+    
+        # Draw = all spaces filled without passing any of the above conditions
+
+        # all_taken = True 
+
+        # for i in range(3):
+        #     for j in range(3):
+            
+        #         #if found an empty spot
+        #         if self.board == " ":
+        #             all_taken = False
+    
+        # return 0 if not all_taken else -1
+
+        return 0
+    
     def check_game_over(self):
-     #game ends if someone wins or its a draw
+        #game ends if someone wins or its a draw
 
         # Win = complete row OR column OR diagonal
         for i in range(3):
@@ -57,18 +111,16 @@ class Board:
 
     
         # Draw = all spaces filled without passing any of the above conditions
-        all_empty = True 
+        all_taken = True
 
         for i in range(3):
             for j in range(3):
-            
-                #if found an empty spot
-                if self.board == " ":
-                    all_empty = False
+                if self.is_empty(i, j):
+                    all_taken = False
     
-        return True if all_empty else False
+        return True if all_taken else False
 
-    def possible_moves(self):
+    def get_all_possible_moves(self):
         available_moves_list = []
 
         for i in range(3):
@@ -77,6 +129,14 @@ class Board:
                     available_moves_list.append((i,j))
         
         return available_moves_list
+    
+    def are_moves_availabe(self):
+        for i in range(3):
+            for j in range(3):
+                if self.is_empty(i, j):
+                    return True
+        
+        return False
 
     
 
